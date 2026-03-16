@@ -5,6 +5,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { FaAngleLeft } from "react-icons/fa6";
+import { useRegister } from "@/app/hooks/useAuth";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function SignUpPage() {
     password: "",
   });
 
-  const [loading, setLoading] = React.useState(false);
+  const { register, loading, error } = useRegister();
 
   // button disabled nếu thiếu field
   const buttonDisabled = !user.username || !user.email || !user.password;
@@ -24,12 +25,9 @@ export default function SignUpPage() {
     if (buttonDisabled || loading) return;
 
     try {
-      setLoading(true);
+      await register(user);
 
-      const response = await axios.post("/api/users/signup", user);
-
-      console.log("signup okay", response.data);
-
+      console.log("signup okay");
       router.push("/login");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -38,7 +36,7 @@ export default function SignUpPage() {
         console.log("Unexpected error", error);
       }
     } finally {
-      setLoading(false);
+      setUser({ username: "", email: "", password: "" });
     }
   };
 
