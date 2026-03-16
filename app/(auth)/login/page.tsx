@@ -5,6 +5,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { FaAngleLeft } from "react-icons/fa6";
+import { useLogin } from "@/app/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function LoginPage() {
     password: "",
   });
 
-  const [loading, setLoading] = React.useState(false);
+  const { login, loading, error } = useLogin();
 
   // disable button nếu thiếu field
   const buttonDisabled = !user.email || !user.password;
@@ -23,12 +24,8 @@ export default function LoginPage() {
     if (buttonDisabled || loading) return;
 
     try {
-      setLoading(true);
-
-      const response = await axios.post("/api/users/login", user);
-
-      console.log("Login successful", response.data);
-
+      await login(user);
+      console.log("Login successful");
       router.push("/profile");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -37,7 +34,7 @@ export default function LoginPage() {
         console.log("Unexpected error", error);
       }
     } finally {
-      setLoading(false);
+      setUser({ email: "", password: "" });
     }
   };
 
