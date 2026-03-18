@@ -15,7 +15,11 @@ import {
   FaUpload,
   FaSpinner,
 } from "react-icons/fa";
-import { userService, UserInformation, getErrorMessage } from "@/api/userService";
+import {
+  userService,
+  UserInformation,
+  getErrorMessage,
+} from "@/api/userService";
 import { uploadService } from "@/api/uploadService";
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
@@ -57,11 +61,13 @@ function EditableField({
   multiline = false,
 }: EditableFieldProps) {
   const inputClass =
-    "w-full bg-transparent border-b border-gray-500 focus:border-gray-200 outline-none text-gray-100 py-1 transition-colors duration-200 resize-none";
+    "w-full bg-transparent border-b border-gray-600 focus:border-green-400 placeholder:text-gray-500 outline-none text-gray-100 py-1 transition-colors duration-200 resize-none";
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs uppercase tracking-widest text-gray-500">{label}</span>
+      <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">
+        {label}
+      </span>
       {editing ? (
         multiline ? (
           <textarea
@@ -80,7 +86,9 @@ function EditableField({
           />
         )
       ) : (
-        <span className={`text-gray-200 text-sm ${!value ? "text-gray-600 italic" : ""}`}>
+        <span
+          className={`text-gray-200 text-sm ${!value ? "text-gray-600 italic" : ""}`}
+        >
           {value || placeholder || "—"}
         </span>
       )}
@@ -157,8 +165,11 @@ export default function ProfilePage() {
     try {
       const { file_url } = await uploadService.uploadFile(file);
       // Persist the new URL immediately via updateUserInfo
-      console.log(file_url)
-      const updated = await userService.updateUserInfo({ ...user, linkCV: file_url });
+      console.log(file_url);
+      const updated = await userService.updateUserInfo({
+        ...user,
+        linkCV: file_url,
+      });
       setUser(updated);
       setDraft(updated);
       setSaveSuccess(true);
@@ -181,7 +192,7 @@ export default function ProfilePage() {
   // ── Loading state ──
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <div className="flex flex-col items-center justify-start min-h-screen pt-28 pb-12 px-4">
         <p className="text-gray-400 animate-pulse text-lg tracking-widest uppercase">
           Loading profile...
         </p>
@@ -192,8 +203,10 @@ export default function ProfilePage() {
   // ── Error / not found ──
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen py-2 gap-4">
-        <p className="text-red-400 text-lg">{error ?? "Failed to load profile."}</p>
+      <div className="flex flex-col items-center justify-start min-h-screen pt-28 pb-12 px-4">
+        <p className="text-red-400 text-lg">
+          {error ?? "Failed to load profile."}
+        </p>
         <button
           onClick={() => router.push("/login")}
           className="p-2 border border-gray-300 rounded-lg px-10 py-3 font-bold uppercase hover:bg-gray-200 hover:text-black transition"
@@ -206,42 +219,64 @@ export default function ProfilePage() {
 
   // ── Profile ──
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen py-12 px-4">
+    <div className="flex flex-col items-center justify-start min-h-screen pt-28 pb-12 px-4">
       {/* Header */}
       <div className="w-full max-w-xl mb-10 flex flex-col items-center gap-4">
         <Avatar email={user.email} />
-        <h1 className="text-4xl font-bold tracking-tight">{user.email}</h1>
+        <h1 className="text-3xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+          {user.email}
+        </h1>
         <RoleBadge role={user.role} />
 
         {/* Quick links */}
         <div className="flex gap-5 mt-2 text-gray-400">
           {user.linkGithub && (
-            <a href={user.linkGithub} target="_blank" rel="noreferrer" className="hover:text-white transition text-xl">
+            <a
+              href={user.linkGithub}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white transition text-xl"
+            >
               <FaGithub />
             </a>
           )}
           {user.linkLinkedin && (
-            <a href={user.linkLinkedin} target="_blank" rel="noreferrer" className="hover:text-white transition text-xl">
+            <a
+              href={user.linkLinkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white transition text-xl"
+            >
               <FaLinkedin />
             </a>
           )}
           {user.linkCV && (
-            <a href={user.linkCV} target="_blank" rel="noreferrer" className="hover:text-white transition text-xl">
+            <a
+              href={user.linkCV}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white transition text-xl"
+            >
               <FaFilePdf />
             </a>
           )}
-          <a href={`mailto:${user.email}`} className="hover:text-white transition text-xl">
+          <a
+            href={`mailto:${user.email}`}
+            className="hover:text-white transition text-xl"
+          >
             <FaEnvelope />
           </a>
         </div>
       </div>
 
       {/* Card */}
-      <div className="w-full max-w-xl border border-gray-700 rounded-2xl p-8 flex flex-col gap-6 bg-gray-900/50">
-
+      <div className="w-full max-w-xl border border-gray-700/60 rounded-2xl p-8 flex flex-col gap-6 bg-gray-900/60 backdrop-blur-md shadow-xl">
+        {" "}
         {/* Edit / Save / Cancel buttons */}
         <div className="flex justify-between items-center">
-          <span className="text-xs uppercase tracking-widest text-gray-500">Profile Information</span>
+          <span className="text-sm font-semibold tracking-wide text-gray-300">
+            PROFILE INFORMATION
+          </span>
           {!editing ? (
             <button
               onClick={() => setEditing(true)}
@@ -261,14 +296,13 @@ export default function ProfilePage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-1 text-sm text-green-500 hover:text-green-300 font-semibold transition disabled:opacity-40"
+                className="flex items-center gap-1 text-sm text-green-400 hover:text-green-300 font-semibold transition disabled:opacity-40"
               >
                 <FaCheck size={12} /> {saving ? "Saving..." : "Save"}
               </button>
             </div>
           )}
         </div>
-
         {/* Fields */}
         <EditableField
           label="Introduction"
@@ -276,10 +310,9 @@ export default function ProfilePage() {
           fieldKey="introduction"
           editing={editing}
           onChange={handleFieldChange}
-          placeholder="Tell us about yourself..."
-          multiline
+          placeholder="Write a short bio about yourself, your skills, or goals..."
+          // multiline
         />
-
         <EditableField
           label="Date of Birth"
           value={draft.dateBirth ?? null}
@@ -288,28 +321,27 @@ export default function ProfilePage() {
           onChange={handleFieldChange}
           placeholder="YYYY-MM-DD"
         />
-
         <EditableField
           label="GitHub"
           value={draft.linkGithub ?? null}
           fieldKey="linkGithub"
           editing={editing}
           onChange={handleFieldChange}
-          placeholder="https://github.com/username"
+          placeholder="https://github.com/your-username"
         />
-
         <EditableField
           label="LinkedIn"
           value={draft.linkLinkedin ?? null}
           fieldKey="linkLinkedin"
           editing={editing}
           onChange={handleFieldChange}
-          placeholder="https://linkedin.com/in/username"
+          placeholder="https://linkedin.com/in/your-profile"
         />
-
         {/* CV Upload */}
         <div className="flex flex-col gap-2">
-          <span className="text-xs uppercase tracking-widest text-gray-500">CV / Resume</span>
+          <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">
+            CV / Resume
+          </span>
 
           {/* Current file */}
           {draft.linkCV ? (
@@ -325,58 +357,58 @@ export default function ProfilePage() {
               </a>
             </div>
           ) : (
-            <span className="text-gray-600 italic text-sm">No CV uploaded yet</span>
+            <span className="text-gray-600 italic text-sm">
+              No CV uploaded yet
+            </span>
           )}
 
           {/* Upload button — always visible */}
           <div className="flex items-center gap-3 mt-1">
-          {/* Upload button — only visible in edit mode */}
-          {editing && (
-            <div className="flex items-center gap-3 mt-1">
-              <input
-                aria-label='cv'
-                ref={cvInputRef}
-                type="file"
-                accept="application/pdf"
-                className="hidden"
-                onChange={handleCvUpload}
-              />
-              <button
-                onClick={() => cvInputRef.current?.click()}
-                disabled={cvUploading}
-                className="flex items-center gap-2 text-sm border border-gray-600 rounded-lg px-4 py-2
-                  hover:border-gray-300 hover:text-white transition
+            {/* Upload button — only visible in edit mode */}
+            {editing && (
+              <div className="flex items-center gap-3 mt-1">
+                <input
+                  aria-label="cv"
+                  ref={cvInputRef}
+                  type="file"
+                  accept="application/pdf"
+                  className="hidden"
+                  onChange={handleCvUpload}
+                />
+                <button
+                  onClick={() => cvInputRef.current?.click()}
+                  disabled={cvUploading}
+                  className="flex items-center gap-2 text-sm border border-gray-600 rounded-lg px-4 py-2
+                  hover:border-green-400 hover:text-green-300
                   disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {cvUploading ? (
-                  <>
-                    <FaSpinner className="animate-spin" size={13} />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <FaUpload size={13} />
-                    {draft.linkCV ? "Replace CV" : "Upload CV"}
-                  </>
-                )}
-              </button>
-              <span className="text-xs text-gray-600">PDF only</span>
-            </div>
-          )}
-                      <span className="text-xs text-gray-600">PDF only</span>
-            </div>
+                >
+                  {cvUploading ? (
+                    <>
+                      <FaSpinner className="animate-spin" size={13} />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <FaUpload size={13} />
+                      {draft.linkCV ? "Replace CV" : "Upload CV"}
+                    </>
+                  )}
+                </button>
+                <span className="text-xs text-gray-600">PDF only</span>
+              </div>
+            )}
+          </div>
 
           {cvUploadError && (
             <p className="text-red-400 text-xs">{cvUploadError}</p>
           )}
         </div>
-
         {/* Feedback messages */}
-        {error && (
-          <p className="text-red-400 text-sm text-center">{error}</p>
-        )}
+        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
         {saveSuccess && (
-          <p className="text-green-500 text-sm text-center">Profile updated successfully ✓</p>
+          <p className="text-green-500 text-sm text-center">
+            Profile updated successfully ✓
+          </p>
         )}
       </div>
 
