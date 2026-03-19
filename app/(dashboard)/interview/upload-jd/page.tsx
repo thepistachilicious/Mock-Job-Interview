@@ -1,21 +1,48 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useInterviewStore } from "@/store/useInterviewStore";
 
 export default function UploadJD() {
   const router = useRouter();
-  const [jobPosition, setJobPosition] = useState("");
-  const [company, setCompany] = useState("");
-  const [jdText, setJdText] = useState("");
+  // const [isChecking, setIsChecking] = useState(true);
+  const jdDescription = useInterviewStore((state) => state.jdDescription);
+  const jobPosition = useInterviewStore((state) => state.jobPosition);
+  const company = useInterviewStore((state) => state.Company);
+  const cvFile = useInterviewStore((state) => state.cvFile);
 
-  // Điều kiện để nút submit sáng lên
-  const canSubmit = jobPosition && jdText && company;
+  const setJdDescription = useInterviewStore((state) => state.setJdDescription);
+  const setJobPosition = useInterviewStore((state) => state.setJobPosition);
+  const setCompany = useInterviewStore((state) => state.setCompany);
+
+  const canSubmit = jobPosition && jdDescription && company;
+
+
+  useEffect(() => {
+    if (!cvFile) {
+      console.warn("Không tìm thấy CV, đang quay lại bước 1...");
+      router.replace("/interview/upload-cv");
+    }
+  }, []);
+
+  const handleContinue = () => {
+    // 1. Log dữ liệu từ State Local
+    console.log("--- Dữ liệu chuẩn bị gửi đi ---");
+    console.log("File CV:", cvFile);
+    console.log("Vị trí:", jobPosition);
+    console.log("Công ty:", company);
+    console.log("Nội dung JD trong Store:", jdDescription);
+
+    router.push("/interview/waiting-room");
+  };
+
+  if (cvFile === null) {
+    return <div className="min-h-screen bg-black" />;
+  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 md:p-8 font-sans text-white">
-      {/* Khung Form căn giữa (Chỉ giữ lại phần phải của code cũ) */}
       <div className="max-w-2xl w-full bg-[#0b1120] rounded-3xl border border-[#334155] p-8 md:p-10 shadow-2xl relative overflow-hidden">
-        {/* Vòng sáng mờ trang trí phía sau (tùy chọn, tạo cảm giác AI) */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#22c55e] opacity-[0.03] rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10">
@@ -29,7 +56,6 @@ export default function UploadJD() {
           </div>
 
           <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            {/* Hàng chứa Vị trí và Công ty */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Input: Job Position */}
               <div>
@@ -94,15 +120,16 @@ export default function UploadJD() {
               <textarea
                 className="w-full h-64 bg-black/60 border border-[#334155] text-white rounded-xl p-5 text-sm outline-none transition-all focus:border-[#22c55e] focus:bg-black focus:ring-1 focus:ring-[#22c55e] resize-none placeholder-[#475569] scrollbar-thin scrollbar-thumb-[#334155] scrollbar-track-transparent leading-relaxed"
                 placeholder="Dán toàn bộ nội dung yêu cầu kỹ năng, trách nhiệm công việc... vào đây."
-                value={jdText}
-                onChange={(e) => setJdText(e.target.value)}
+                value={jdDescription}
+                onChange={(e) => setJdDescription(e.target.value)}
               />
             </div>
 
             {/* Submit Button */}
             <div className="pt-6 border-t border-[#334155]/50">
               <button
-                onClick={() => router.push("/interview/waiting-room")}
+                // onClick={() => router.push("/interview/waiting-room")}
+                onClick={handleContinue}
                 type="submit"
                 disabled={!canSubmit}
                 className="w-full py-4 rounded-full font-bold text-lg transition-all duration-300
