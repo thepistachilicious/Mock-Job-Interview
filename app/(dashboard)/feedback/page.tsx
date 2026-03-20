@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/app/component/ui/card";
+import { Progress } from "@/app/component/ui/progress";
 import {
   BarChart,
   Bar,
