@@ -12,6 +12,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { FaAngleLeft } from "react-icons/fa";
 
 const feedbackData = [
   { name: "Technical", score: 75 },
@@ -61,7 +63,12 @@ export default function FeedbackPage() {
             </h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={feedbackData}>
-                <XAxis dataKey="name" stroke="#aaa" />
+                <XAxis
+                  dataKey="name"
+                  stroke="#aaa"
+                  tick={{ fontSize: 12 }}
+                  interval={0}
+                />
                 <YAxis stroke="#aaa" />
                 <Tooltip />
                 <Bar dataKey="score" />
@@ -112,6 +119,12 @@ export default function FeedbackPage() {
           </CardContent>
         </Card>
       </div>
+      {/* Back link */}
+      <Link href="/">
+        <p className="mt-10 opacity-50 hover:opacity-100 hover:font-semibold transition cursor-pointer">
+          <FaAngleLeft className="inline mr-1" /> Back to the Homepage
+        </p>
+      </Link>
     </div>
   );
 }
