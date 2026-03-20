@@ -2,26 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+/* =========================
+   THEME (DARK FIRST)
+========================= */
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+    /* Background & text */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    /* Card */
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+
+    /* Popover */
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Primary (green accent) */
+    --primary: 142 71% 45%;
+    --primary-foreground: 144 70% 96%;
+
+    /* Secondary */
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Muted */
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Accent */
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    /* Danger */
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Borders & inputs */
+    --border: 217 32% 20%;
+    --input: 217 32% 20%;
+    --ring: 142 71% 45%;
+
+    /* Radius */
+    --radius: 0.75rem;
+  }
+
+  /* =========================
+     BASE STYLES
+  ========================= */
+
+  * {
+    @apply border-gray-700;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
 }

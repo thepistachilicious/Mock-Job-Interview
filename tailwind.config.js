@@ -6,7 +6,15 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))", // 🔥 QUAN TRỌNG
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+      },
+    },
   },
   plugins: [],
 };
