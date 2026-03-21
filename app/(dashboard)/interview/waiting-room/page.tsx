@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useInterviewStore } from "@/store/useInterviewStore";
+import { extractCvText, startInterview } from "@/api/interviewService";
 
 export default function WaitingRoom() {
   const router = useRouter();
@@ -9,10 +10,15 @@ export default function WaitingRoom() {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   const setDevices = useInterviewStore((state) => state.setDevices);
+  const setSessionId = useInterviewStore((state) => state.setSessionId);
+  const setCvText = useInterviewStore((state) => state.setCvText);
   const jdDescription = useInterviewStore((state) => state.jdDescription);
   const jobPosition = useInterviewStore((state) => state.jobPosition);
   const company = useInterviewStore((state) => state.Company);
   const cvFile = useInterviewStore((state) => state.cvFile);
+
+  const [isStarting, setIsStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!cvFile || !jobPosition || !company || !jdDescription) {
@@ -91,9 +97,48 @@ export default function WaitingRoom() {
     }
   }, [selectedCamera, selectedMic, isAuthorized]);
 
-  const handleEnterInterview = () => {
-    setDevices(selectedMic, selectedCamera);
-    router.push("/interview");
+  const handleEnterInterview = async () => {
+    if (!cvFile || isStarting) return;
+    setIsStarting(true);
+    setStartError(null);
+
+    try {
+      // 1. Extract plain text from the CV PDF
+      const extracted = await extractCvText(cvFile);
+      setCvText(extracted.text);
+
+      // 2. Create the backend interview session → get real session_id
+      const session = await startInterview({
+        cv_text: extracted.text,
+        job_position: jobPosition,
+        job_description: jdDescription,
+        company_description: company,
+      });
+
+      // 3. Save selected devices BEFORE stopping the preview stream,
+      //    then release the tracks so Agora can acquire the same devices cleanly.
+      setDevices(selectedMic, selectedCamera);
+      setSessionId(session.session_id);
+
+      // Release preview stream — Agora will re-acquire the devices on join
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+
+      router.push(`/interview/${session.session_id}`);
+    } catch (err) {
+      console.error('Failed to start interview:', err);
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.includes('PDF upload failed') || msg.includes('trích xuất')) {
+        setStartError(
+          'Không thể đọc nội dung CV. Vui lòng dùng file PDF dạng văn bản (text-based), không phải bản scan hoặc ảnh.'
+        );
+      } else {
+        setStartError('Không thể khởi động phỏng vấn. Vui lòng thử lại.');
+      }
+      setIsStarting(false);
+    }
   };
 
   // 3. CHẶN RENDER: Nếu chưa kiểm tra xong hoặc thiếu dữ liệu, trả về màn hình trống
@@ -349,11 +394,23 @@ export default function WaitingRoom() {
                 </div>
               </div>
 
+              {startError && (
+                <p className="text-red-400 text-sm text-center px-2">{startError}</p>
+              )}
+
               <button
                 onClick={handleEnterInterview}
-                className="mt-4 w-full py-4 rounded-full font-bold text-lg bg-[#22c55e] text-black hover:bg-[#1ea34d] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] transition-all active:scale-[0.98]"
+                disabled={isStarting}
+                className="mt-4 w-full py-4 rounded-full font-bold text-lg bg-[#22c55e] text-black hover:bg-[#1ea34d] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
-                Vào phòng phỏng vấn ngay
+                {isStarting ? (
+                  <>
+                    <span className="animate-spin rounded-full h-5 w-5 border-2 border-black border-t-transparent" />
+                    Đang chuẩn bị...
+                  </>
+                ) : (
+                  'Vào phòng phỏng vấn ngay'
+                )}
               </button>
             </div>
           </div>
