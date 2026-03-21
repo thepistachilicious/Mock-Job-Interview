@@ -147,8 +147,8 @@ export default function WaitingRoom() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 md:p-8 font-sans text-white">
-      <div className="max-w-5xl w-full space-y-10">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 font-sans text-white bg-black md:p-8">
+      <div className="w-full max-w-5xl space-y-10">
         {/* PHẦN 1: NOTICES */}
         <div className="space-y-6">
           <div className="flex items-center gap-3">
@@ -172,7 +172,7 @@ export default function WaitingRoom() {
 
           {/* 4 Thẻ Cảnh báo (Warning Cards) */}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Card 1 */}
 
             <div className="bg-[#0b1120] border border-[#334155] border-b-2 border-b-red-500/80 rounded-xl p-5 flex flex-col gap-4">
@@ -284,7 +284,7 @@ export default function WaitingRoom() {
             <h2 className="text-2xl font-bold text-white">Chuẩn bị sẵn sàng</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {/* CỘT TRÁI: PREVIEW CAMERA */}
             <div className="flex flex-col items-center gap-4">
               <div className="w-full bg-[#0b1120] border border-[#334155] rounded-2xl aspect-video relative overflow-hidden shadow-xl bg-black">
@@ -299,14 +299,13 @@ export default function WaitingRoom() {
                   CAMERA PREVIEW
                 </div>
               </div>
-              <p className="font-semibold text-[#e2e8f0]">Nguyễn Văn A</p>
             </div>
 
             {/* CỘT PHẢI: SETTINGS */}
             <div className="flex flex-col gap-4">
               {/* Select Camera */}
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 pointer-events-none">
                   <svg
                     width="18"
                     height="18"
@@ -341,7 +340,7 @@ export default function WaitingRoom() {
 
               {/* Select Mic */}
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 pointer-events-none">
                   <svg
                     width="18"
                     height="18"
@@ -395,7 +394,7 @@ export default function WaitingRoom() {
               </div>
 
               {startError && (
-                <p className="text-red-400 text-sm text-center px-2">{startError}</p>
+                <p className="px-2 text-sm text-center text-red-400">{startError}</p>
               )}
 
               <button
@@ -405,7 +404,7 @@ export default function WaitingRoom() {
               >
                 {isStarting ? (
                   <>
-                    <span className="animate-spin rounded-full h-5 w-5 border-2 border-black border-t-transparent" />
+                    <span className="w-5 h-5 border-2 border-black rounded-full animate-spin border-t-transparent" />
                     Đang chuẩn bị...
                   </>
                 ) : (

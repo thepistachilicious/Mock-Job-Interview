@@ -3,7 +3,7 @@ import axiosInstance from './axios';
 export interface AgoraTokenResponse {
   token: string;
   channel_name: string; // backend field name
-  app_id: string;
+  app_id:  "5957660fae2d45779d46595be5c9a4da";
   uid: number;
   expire_seconds: number;
 }

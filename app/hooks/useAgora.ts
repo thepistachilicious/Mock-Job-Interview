@@ -131,7 +131,7 @@ export function useAgora(): UseAgoraReturn {
       try {
         const tokenData = await fetchAgoraToken(sessionId);
         const appId = tokenData.app_id || process.env.NEXT_PUBLIC_AGORA_APP_ID || '';
-
+        console.log('[Agora] appId being used:', JSON.stringify(appId));
         console.debug('[Agora] joining channel:', tokenData.channel_name, '| uid:', tokenData.uid);
 
         const client = getClient();
