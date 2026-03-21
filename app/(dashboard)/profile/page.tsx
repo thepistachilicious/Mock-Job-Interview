@@ -27,7 +27,8 @@ import { uploadService } from "@/api/uploadService";
 function Avatar({ email }: { email: string }) {
   const initials = email?.slice(0, 2).toUpperCase() ?? "??";
   return (
-    <div className="w-24 h-24 rounded-full border-2 border-gray-300 flex items-center justify-center text-3xl font-bold text-gray-200 bg-gray-800 select-none">
+    <div className="w-24 h-24 rounded-full border-2 border-border flex items-center justify-center text-3xl font-bold text-foreground bg-card select-none">
+      {" "}
       {initials}
     </div>
   );
@@ -61,11 +62,11 @@ function EditableField({
   multiline = false,
 }: EditableFieldProps) {
   const inputClass =
-    "w-full bg-transparent border-b border-gray-600 focus:border-green-400 placeholder:text-gray-500 outline-none text-gray-100 py-1 transition-colors duration-200 resize-none";
-
+    "w-full bg-transparent border-b border-border focus:border-primary placeholder:text-muted-foreground outline-none text-foreground py-1 transition-colors duration-200 resize-none";
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">
+      <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+        {" "}
         {label}
       </span>
       {editing ? (
@@ -87,7 +88,7 @@ function EditableField({
         )
       ) : (
         <span
-          className={`text-gray-200 text-sm ${!value ? "text-gray-600 italic" : ""}`}
+          className={`text-foreground text-sm ${!value ? "text-muted-foreground italic" : ""}`}
         >
           {value || placeholder || "—"}
         </span>
@@ -223,7 +224,8 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="w-full max-w-xl mb-10 flex flex-col items-center gap-4">
         <Avatar email={user.email} />
-        <h1 className="text-3xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+          {" "}
           {user.email}
         </h1>
         <RoleBadge role={user.role} />
@@ -270,7 +272,14 @@ export default function ProfilePage() {
       </div>
 
       {/* Card */}
-      <div className="w-full max-w-xl border border-gray-700/60 rounded-2xl p-8 flex flex-col gap-6 bg-gray-900/60 backdrop-blur-md shadow-xl">
+      <div
+        className="
+  w-full max-w-xl rounded-2xl p-8 flex flex-col gap-6 backdrop-blur-md shadow-xl
+  border border-border
+  bg-[hsl(var(--card))]
+  dark:bg-gray-900/60
+"
+      >
         {" "}
         {/* Edit / Save / Cancel buttons */}
         <div className="flex justify-between items-center">
@@ -280,7 +289,7 @@ export default function ProfilePage() {
           {!editing ? (
             <button
               onClick={() => setEditing(true)}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition"
+              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition disabled:opacity-40"
             >
               <FaPen size={12} /> Edit
             </button>
@@ -296,7 +305,7 @@ export default function ProfilePage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-1 text-sm text-green-400 hover:text-green-300 font-semibold transition disabled:opacity-40"
+                className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 font-semibold transition disabled:opacity-40"
               >
                 <FaCheck size={12} /> {saving ? "Saving..." : "Save"}
               </button>
@@ -378,9 +387,11 @@ export default function ProfilePage() {
                 <button
                   onClick={() => cvInputRef.current?.click()}
                   disabled={cvUploading}
-                  className="flex items-center gap-2 text-sm border border-gray-600 rounded-lg px-4 py-2
-                  hover:border-green-400 hover:text-green-300
-                  disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="
+flex items-center gap-2 text-sm border border-border rounded-lg px-4 py-2
+bg-background hover:bg-accent hover:border-primary hover:text-primary
+transition disabled:opacity-40 disabled:cursor-not-allowed
+"
                 >
                   {cvUploading ? (
                     <>

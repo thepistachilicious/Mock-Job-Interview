@@ -5,7 +5,7 @@ import { useInterviewStore } from "@/store/useInterviewStore"; // Import store c
 
 export default function UploadCV() {
   const router = useRouter();
-  
+
   // Lấy dữ liệu và hàm cập nhật từ Zustand
   const file = useInterviewStore((state) => state.cvFile);
   const setCvFile = useInterviewStore((state) => state.setCvFile);
@@ -19,7 +19,7 @@ export default function UploadCV() {
       alert("Vui lòng chỉ chọn tệp PDF.");
     }
     e.target.value = "";
-    console.log("zustand CV File:", file); 
+    console.log("zustand CV File:", file);
   };
 
   const handleRemoveFile = (e: React.MouseEvent) => {
@@ -30,16 +30,17 @@ export default function UploadCV() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-lg text-center">
         <h1 className="text-4xl font-bold mb-4">
           Tải lên <span className="text-green-500">CV</span>
         </h1>
         <p className="text-gray-400 mb-8">
-          AI sẽ dựa vào CV của bạn để tạo ra bộ câu hỏi phỏng vấn sát với thực tế nhất.
+          AI sẽ dựa vào CV của bạn để tạo ra bộ câu hỏi phỏng vấn sát với thực
+          tế nhất.
         </p>
 
-        <label className="block w-full h-48 border-2 border-dashed border-gray-700 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-green-500 transition-colors bg-gray-900/50">
+        <label className="block w-full h-48 border-2 border-dashed bg-gradient-to-r from-green-200 via-green-100 to-green-100 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-green-500 transition-colors">
           {!file ? (
             <div className="flex flex-col items-center">
               <svg
@@ -57,10 +58,10 @@ export default function UploadCV() {
                 <polyline points="17 8 12 3 7 8" />
                 <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
-              <p className="text-gray-300">Nhấn để chọn file PDF</p>
+              <p className="text-black">Nhấn để chọn file PDF</p>
             </div>
           ) : (
-            <div className="flex items-center gap-3 p-4 bg-gray-800 rounded-lg border border-gray-600">
+            <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-200 via-green-100 to-green-100 rounded-lg border border-gray-600">
               <svg
                 width="28"
                 height="28"
@@ -75,13 +76,13 @@ export default function UploadCV() {
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
               </svg>
-              <span className="text-white truncate max-w-[200px] font-medium">
+              <span className="text-black truncate max-w-[200px] font-medium">
                 {file.name}
               </span>
 
               <button
                 onClick={handleRemoveFile}
-                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                className="text-foreground-400 hover:text-red-500 transition-colors p-1"
                 aria-label="Xóa file"
               >
                 <svg
@@ -111,7 +112,16 @@ export default function UploadCV() {
         <button
           onClick={() => router.push("/interview/upload-jd")}
           disabled={!file}
-          className="mt-8 w-full py-4 bg-green-500 text-black font-bold text-lg rounded-full disabled:bg-gray-800 disabled:text-gray-500 transition-all hover:scale-[1.02] active:scale-100 shadow-lg shadow-green-500/10"
+          className="
+    mt-8 w-full py-4
+    bg-gradient-to-r from-green-200 via-green-100 to-green-100 text-black
+    font-bold text-lg rounded-full
+    transition-all
+    hover:opacity-90 hover:scale-[1.02]
+    active:scale-100
+    disabled:text-muted-foreground
+    shadow-lg
+  "
         >
           Tiếp tục
         </button>

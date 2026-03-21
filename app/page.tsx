@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="text-white">
+    <main className="bg-background text-foreground">
       {/* HERO SECTION */}
       <section className="min-h-screen flex items-center justify-center px-6">
         <div className="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
@@ -15,7 +16,7 @@ export default function Home() {
               <span className="text-green-400">Job Interview</span> with AI
             </h1>
 
-            <p className="text-gray-300 text-lg mb-8">
+            <p className="text-muted-foreground text-lg mb-8">
               Simulate real interviews with an AI interviewer, answer through
               video, and receive instant feedback based on the company&apos;s
               job description.
@@ -41,9 +42,15 @@ export default function Home() {
           </div>
 
           {/* RIGHT DEMO BOX */}
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 shadow-lg">
-            <div className="h-64 flex items-center justify-center text-gray-400">
-              Interview Screen Preview
+          <div className="bg-card border border-border rounded-xl overflow-hidden shadow-lg">
+            <div className="relative h-72 w-full group">
+              <Image
+                src="/images/demo.jpg"
+                alt="Interview Preview"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             </div>
           </div>
         </div>
@@ -54,31 +61,31 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-16">How It Works</h2>
 
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-10">
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-700 hover:border-green-400 transition">
+          <div className="bg-card p-6 rounded-xl border border-border hover:border-primary transition shadow-lg">
             <h3 className="text-xl font-semibold mb-3 text-green-400">
               1. Upload Your CV
             </h3>
-            <p className="text-gray-400">
+            <p className="text-muted-foreground">
               Tell us about your experience and the position you&apos;re
               applying for.
             </p>
           </div>
 
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-700 hover:border-green-400 transition">
+          <div className="bg-card p-6 rounded-xl border border-border hover:border-primary transition shadow-lg">
             <h3 className="text-xl font-semibold mb-3 text-green-400">
               2. AI Conducts Interview
             </h3>
-            <p className="text-gray-400">
+            <p className="text-muted-foreground">
               Answer interview questions through video and chat just like a real
               interview.
             </p>
           </div>
 
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-700 hover:border-green-400 transition">
+          <div className="bg-card p-6 rounded-xl border border-border hover:border-primary transition shadow-lg">
             <h3 className="text-xl font-semibold mb-3 text-green-400">
               3. Get Your Feedback
             </h3>
-            <p className="text-gray-400">
+            <p className="text-muted-foreground">
               Receive a score out of 100 with detailed improvement suggestions.
             </p>
           </div>
@@ -86,28 +93,33 @@ export default function Home() {
       </section>
 
       {/* DEMO / FEATURE SECTION */}
-      <section className="py-24 px-6 bg-black">
+      <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 h-72 flex items-center justify-center text-gray-400">
-            Video + AI Chat Interface
+          <div className="relative h-72 w-full overflow-hidden rounded-xl border border-border">
+            <Image
+              src="/images/demo.jpg"
+              alt="AI Interview Interface"
+              fill
+              className="object-cover"
+            />
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-3xl font-bold mb-6 text-green-400">
               Realistic Interview Experience
             </h2>
 
-            <p className="text-gray-400 mb-4">
+            <p className="text-muted-foreground">
               Our AI interviewer asks questions based on your resume and the job
               description.
             </p>
 
-            <p className="text-gray-400 mb-4">
+            <p className="text-muted-foreground">
               You answer naturally through video while the AI evaluates your
               responses.
             </p>
 
-            <p className="text-gray-400">
+            <p className="text-muted-foreground">
               After the interview, receive a detailed score and feedback to
               improve your performance.
             </p>
@@ -117,11 +129,11 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="py-28 text-center px-6">
-        <h2 className="text-4xl font-bold mb-6">
+        <h2 className="text-4xl font-bold mb-6 text-green-400">
           Ready to Practice Your Interview?
         </h2>
 
-        <p className="text-gray-400 mb-10">
+        <p className="text-muted-foreground mb-10">
           Start your mock interview today and improve your chances of getting
           hired.
         </p>
