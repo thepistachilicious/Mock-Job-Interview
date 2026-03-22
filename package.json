@@ -21,10 +21,6 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-icons": "^5.5.0",
-<<<<<<< HEAD
-    "zustand": "^5.0.12",
-=======
->>>>>>> 96c6f8f (fix ui theme)
     "recharts": "^3.8.0",
     "shadcn": "^4.0.8",
     "tailwind-merge": "^3.5.0",
