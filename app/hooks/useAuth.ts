@@ -9,7 +9,7 @@ export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const login = async (payload: LoginPayload, redirectTo = '/dashboard') => {
+  const login = async (payload: LoginPayload, redirectTo = '/') => {
     setLoading(true);
     setError(null);
     try {
