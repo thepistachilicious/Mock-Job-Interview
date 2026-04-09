@@ -16,7 +16,7 @@ export default function WaitingRoom() {
   const cvFile = useInterviewStore((state) => state.cvFile);
 
   // =========================
-  // DERIVE STATE (NO useState)
+  // DERIVE STATE
   // =========================
   const isAuthorized =
     !!cvFile && !!jobPosition && !!company && !!jdDescription;
@@ -42,7 +42,7 @@ export default function WaitingRoom() {
   const streamRef = useRef<MediaStream | null>(null);
 
   // =========================
-  // INIT DEVICES (FIX WARNING)
+  // INIT DEVICES
   // =========================
   useEffect(() => {
     if (!isAuthorized) return;
@@ -51,8 +51,10 @@ export default function WaitingRoom() {
 
     const initDevices = async () => {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
+        // Request permissions first so device labels are populated
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
+        const devices = await navigator.mediaDevices.enumerateDevices();
         if (!mounted) return;
 
         const videoInputs = devices.filter((d) => d.kind === "videoinput");
@@ -64,23 +66,20 @@ export default function WaitingRoom() {
         if (videoInputs.length > 0) {
           setSelectedCamera((prev) => prev || videoInputs[0].deviceId);
         }
-
         if (audioInputs.length > 0) {
           setSelectedMic((prev) => prev || audioInputs[0].deviceId);
         }
       } catch (err) {
-        console.error("Lỗi lấy thiết bị:", err);
+        console.error("Error getting devices:", err);
       }
     };
 
     initDevices();
-
     navigator.mediaDevices.ondevicechange = initDevices;
 
     return () => {
       mounted = false;
       navigator.mediaDevices.ondevicechange = null;
-
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
       }
@@ -117,7 +116,7 @@ export default function WaitingRoom() {
           videoRef.current.srcObject = stream;
         }
       } catch (err) {
-        console.error("Không truy cập được camera/mic:", err);
+        console.error("Cannot access camera/mic:", err);
       }
     };
 
@@ -132,7 +131,13 @@ export default function WaitingRoom() {
   // ACTION
   // =========================
   const handleEnterInterview = () => {
-    setDevices(selectedMic, selectedCamera);
+    // Stop preview stream before navigating
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+
+    setDevices(selectedCamera, selectedMic); // ✅ camera first, mic second
     router.push("/interview");
   };
 
@@ -142,9 +147,7 @@ export default function WaitingRoom() {
   if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">
-          Đang chuẩn bị phòng phỏng vấn...
-        </p>
+        <p className="text-muted-foreground">Đang chuẩn bị phòng phỏng vấn...</p>
       </div>
     );
   }
@@ -155,8 +158,8 @@ export default function WaitingRoom() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6 text-foreground">
       <div className="w-full max-w-4xl grid md:grid-cols-2 gap-8">
-        {/* CAMERA */}
-        <div className="bg-card border border-border rounded-2xl overflow-hidden">
+        {/* CAMERA PREVIEW */}
+        <div className="bg-card border border-border rounded-2xl overflow-hidden aspect-video">
           <video
             ref={videoRef}
             autoPlay
@@ -167,30 +170,36 @@ export default function WaitingRoom() {
         </div>
 
         {/* SETTINGS */}
-        <div className="flex flex-col gap-4">
-          <select
-            className="bg-card border border-border rounded-xl p-3"
-            value={selectedCamera}
-            onChange={(e) => setSelectedCamera(e.target.value)}
-          >
-            {videoDevices.map((d) => (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label || "Camera"}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-4 justify-center">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-muted-foreground font-medium">Camera</label>
+            <select
+              className="bg-card border border-border rounded-xl p-3"
+              value={selectedCamera}
+              onChange={(e) => setSelectedCamera(e.target.value)}
+            >
+              {videoDevices.map((d) => (
+                <option key={d.deviceId} value={d.deviceId}>
+                  {d.label || "Camera"}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            className="bg-card border border-border rounded-xl p-3"
-            value={selectedMic}
-            onChange={(e) => setSelectedMic(e.target.value)}
-          >
-            {audioDevices.map((d) => (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label || "Microphone"}
-              </option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-muted-foreground font-medium">Microphone</label>
+            <select
+              className="bg-card border border-border rounded-xl p-3"
+              value={selectedMic}
+              onChange={(e) => setSelectedMic(e.target.value)}
+            >
+              {audioDevices.map((d) => (
+                <option key={d.deviceId} value={d.deviceId}>
+                  {d.label || "Microphone"}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button
             onClick={handleEnterInterview}

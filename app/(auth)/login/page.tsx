@@ -2,40 +2,18 @@
 
 import Link from "next/link";
 import React from "react";
-import { useRouter } from "next/navigation";
-import axios from "axios";
 import { FaAngleLeft } from "react-icons/fa6";
 import { useLogin } from "@/app/hooks/useAuth";
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const [user, setUser] = React.useState({
-    email: "",
-    password: "",
-  });
-
+  const [user, setUser] = React.useState({ email: "", password: "" });
   const { login, loading, error } = useLogin();
 
-  // disable button nếu thiếu field
   const buttonDisabled = !user.email || !user.password;
 
   const onLogin = async () => {
     if (buttonDisabled || loading) return;
-
-    try {
-      await login(user);
-      console.log("Login successful");
-      router.push("/profile");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        console.log("Login failed", error.message);
-      } else {
-        console.log("Unexpected error", error);
-      }
-    } finally {
-      setUser({ email: "", password: "" });
-    }
+    await login(user); // useLogin handles redirect & error internally
   };
 
   return (
@@ -60,13 +38,17 @@ export default function LoginPage() {
         placeholder="Password..."
       />
 
+      {error && (
+        <p className="text-red-500 text-sm mt-2">{error}</p>
+      )}
+
       <button
         onClick={onLogin}
         disabled={buttonDisabled || loading}
         className="p-2 border border-gray-300 rounded-lg uppercase px-40 py-3 mt-10 font-bold
-  transition-all duration-200
-  enabled:hover:bg-gray-200 enabled:hover:text-black enabled:hover:scale-105
-  disabled:opacity-40 disabled:cursor-not-allowed"
+          transition-all duration-200
+          enabled:hover:bg-gray-200 enabled:hover:text-black enabled:hover:scale-105
+          disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {loading ? "Logging in..." : "Login"}
       </button>

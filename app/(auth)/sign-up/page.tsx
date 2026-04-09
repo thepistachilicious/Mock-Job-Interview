@@ -11,7 +11,7 @@ export default function SignUpPage() {
   const router = useRouter();
 
   const [user, setUser] = React.useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
   });
@@ -19,7 +19,7 @@ export default function SignUpPage() {
   const { register, loading, error } = useRegister();
 
   // button disabled nếu thiếu field
-  const buttonDisabled = !user.username || !user.email || !user.password;
+  const buttonDisabled = !user.name || !user.email || !user.password;
 
   const onSignUp = async () => {
     if (buttonDisabled || loading) return;
@@ -36,7 +36,7 @@ export default function SignUpPage() {
         console.log("Unexpected error", error);
       }
     } finally {
-      setUser({ username: "", email: "", password: "" });
+      setUser({ name: "", email: "", password: "" });
     }
   };
 
@@ -49,8 +49,8 @@ export default function SignUpPage() {
       <input
         className="w-[350px] text-slate-800 p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
         type="text"
-        value={user.username}
-        onChange={(e) => setUser({ ...user, username: e.target.value })}
+        value={user.name}
+        onChange={(e) => setUser({ ...user, name: e.target.value })}
         placeholder="Username..."
       />
 

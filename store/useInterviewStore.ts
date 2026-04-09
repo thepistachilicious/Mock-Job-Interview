@@ -1,34 +1,36 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-interface InterviewState {
+interface InterviewStore {
   cvFile: File | null;
+  cvText: string;
+  jdDescription: string;
   jobPosition: string;
   Company: string;
-  jdDescription: string;
-
-  micId: string;
-  cameraId: string;
+  selectedMic: string;
+  selectedCamera: string;
 
   setCvFile: (file: File | null) => void;
-  setJobPosition: (position: string) => void;
+  setCvText: (text: string) => void;
+  setJdDescription: (jd: string) => void;
+  setJobPosition: (pos: string) => void;
   setCompany: (company: string) => void;
-  setJdDescription: (description: string) => void;
-  setDevices: (micId: string, cameraId: string) => void;
-  resetStore: () => void;
+  setDevices: (cameraId: string, micId: string) => void;
 }
 
-export const useInterviewStore = create<InterviewState>((set) => ({
+export const useInterviewStore = create<InterviewStore>((set) => ({
   cvFile: null,
+  cvText: "",
+  jdDescription: "",
   jobPosition: "",
   Company: "",
-  jdDescription: "",
-  micId: "",
-  cameraId: "",
+  selectedMic: "",
+  selectedCamera: "",
 
   setCvFile: (file) => set({ cvFile: file }),
-  setJobPosition: (position) => set({ jobPosition: position }),
+  setCvText: (text) => set({ cvText: text }),
+  setJdDescription: (jd) => set({ jdDescription: jd }),
+  setJobPosition: (pos) => set({ jobPosition: pos }),
   setCompany: (company) => set({ Company: company }),
-  setJdDescription: (description) => set({ jdDescription: description }),
-  setDevices: (micId, cameraId) => set({ micId, cameraId }),
-  resetStore: () => set({ cvFile: null, jobPosition: "", Company: "", jdDescription: "", micId: "", cameraId: "" }),
+  setDevices: (cameraId, micId) =>
+    set({ selectedCamera: cameraId, selectedMic: micId }),
 }));

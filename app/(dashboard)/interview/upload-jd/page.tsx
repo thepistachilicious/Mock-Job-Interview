@@ -32,7 +32,7 @@ export default function UploadJD() {
     console.log("Công ty:", company);
     console.log("Nội dung JD trong Store:", jdDescription);
 
-    router.push("/interview/waiting-room");
+    router.push("/interview/new");
   };
 
   if (cvFile === null) {
@@ -78,7 +78,8 @@ export default function UploadJD() {
                 </label>
                 <div className="relative">
                   <select
-                    className="w-full bg-background/60 border border-border text-foreground rounded-xl p-4 text-sm outline-none transition-all focus:border-[#22c55e] focus:bg-background focus:ring-1 focus:ring-[#22c55e] appearance-none cursor-pointer"
+                    aria-label="select company"
+                    className="w-full bg-black/60 border border-[#334155] text-white rounded-xl p-4 text-sm outline-none transition-all focus:border-[#22c55e] focus:bg-black focus:ring-1 focus:ring-[#22c55e] appearance-none cursor-pointer"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                   >
