@@ -3,57 +3,89 @@
 @tailwind utilities;
 
 /* =========================
-   THEME (DARK FIRST)
+   THEME SYSTEM (Tailwind + next-themes)
 ========================= */
 @layer base {
   :root {
-    /* Background & text */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Light mode (fallback nếu dùng) */
+    --background: 0 0% 100%;
+    --background-strong: linear-gradient(
+    to right,
+    #bbf7d0,
+    #f3f4f6,
+    #dcfce7
+  );
+    --foreground: 222 47% 11%;
 
-    /* Card */
-    --card: 222 47% 13%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    /* Popover */
-    --popover: 222 47% 13%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Primary (green accent) */
     --primary: 142 71% 45%;
     --primary-foreground: 144 70% 96%;
 
-    /* Secondary */
-    --secondary: 217 32% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    /* Muted */
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20% 40%;
 
-    /* Accent */
-    --accent: 217 32% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
-    /* Danger */
     --destructive: 0 63% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    /* Borders & inputs */
-    --border: 217 32% 20%;
-    --input: 217 32% 20%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: 142 71% 45%;
 
-    /* Radius */
     --radius: 0.75rem;
   }
 
   /* =========================
-     BASE STYLES
+     DARK MODE (main UI của bạn)
+     ThemeProvider sẽ add class="dark"
+  ========================= */
+  .dark {
+    --background: 222 47% 11%;
+    --background-strong: 222 47% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 142 71% 45%;
+    --primary-foreground: 144 70% 96%;
+
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 32% 20%;
+    --input: 217 32% 20%;
+    --ring: 142 71% 45%;
+  }
+
+  /* =========================
+     BASE RESET
   ========================= */
 
   * {
-    @apply border-gray-700;
+    @apply border-border;
   }
 
   body {

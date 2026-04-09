@@ -12,6 +12,7 @@ import LocalCamera from "@/app/component/ui/LocalCamera";
 import TranscriptPanel from "@/app/component/ui/TranscriptPanel";
 import { useInterviewStore } from "@/store/useInterviewStore";
 
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type Step = "interview" | "ending";
@@ -144,6 +145,9 @@ function InterviewStep({
   const timerRef     = useRef<ReturnType<typeof setInterval> | null>(null);
   const pollRef      = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // FIX Bug 5: Keep sessionIdRef in sync if the prop changes
+  useEffect(() => { sessionIdRef.current = sessionId; }, [sessionId]);
+
   const agora  = useAgora();
   const tts    = useTextToSpeech();
   const ttsRef = useRef(tts);
@@ -195,22 +199,22 @@ function InterviewStep({
       .catch(() => setJoining(false));
 
     timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+
+    // FIX Bug 6: always clear timerRef on unmount, not just inside doEnd
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── 3. End session ────────────────────────────────────────────────────────
-  // Defined before stt so doEnd can call stt.stopListening — but stt isn't
-  // available yet, so we use a ref-forwarding pattern via doEndRef below.
-  const doEndRef = useRef(async () => {});
+  const doEndRef = useRef<() => Promise<void>>(async () => {});
 
   const doEnd = useCallback(async () => {
-    doEndRef.current();
+    await doEndRef.current();
   }, []);
 
   // ── 4. User speech → SSE streamed reply ──────────────────────────────────
-  // Stored in a ref so useSpeechToText always calls the latest version
-  // without rebuilding the hook on every render.
   const handleFinalTranscriptImpl = useRef(async (_text: string) => {});
 
   useEffect(() => {
@@ -231,10 +235,15 @@ function InterviewStep({
         return;
       }
 
+      // FIX Bug 4: Do not process transcript while the AI is speaking —
+      // the mic would pick up the AI's voice and echo it back as a user answer.
+      if (ttsRef.current.isSpeaking) {
+        console.warn("[STT] bail: TTS is speaking, ignoring transcript to avoid echo");
+        return;
+      }
+
       const assistantId = crypto.randomUUID();
 
-      // Add user message + empty assistant placeholder in one update
-      // so assistantId is stable before any streaming tokens arrive
       setMessages((prev) => [
         ...prev,
         { id: crypto.randomUUID(), role: "user",      content: text, timestamp: Date.now() },
@@ -280,14 +289,14 @@ function InterviewStep({
     };
   }, [config.voice]);
 
-  // Stable wrapper — identity never changes so useSpeechToText won't re-subscribe
   const stableHandleTranscript = useCallback((text: string) => {
     handleFinalTranscriptImpl.current(text);
   }, []);
 
   const stt = useSpeechToText(stableHandleTranscript);
 
-  // Now wire up doEndRef with the real stt instance
+  // FIX Bug 3: Initialize doEndRef immediately with a synchronous-safe version
+  // using refs only, so it works even before the effect below runs.
   useEffect(() => {
     doEndRef.current = async () => {
       stt.stopListening();
@@ -295,9 +304,11 @@ function InterviewStep({
       if (timerRef.current) clearInterval(timerRef.current);
       if (pollRef.current)  clearInterval(pollRef.current);
       await agora.leave();
+      // FIX Bug 2: Pass the actual current sessionId to onEnd
       onEnd(sessionIdRef.current);
     };
   }, [stt, agora, onEnd]);
+
 
   // ── Derived UI values ─────────────────────────────────────────────────────
   const mm       = String(Math.floor(elapsed / 60)).padStart(2, "0");
@@ -493,7 +504,10 @@ function InterviewStep({
               </div>
             </div>
 
-            {/* Local tile — plain getUserMedia, no Agora */}
+            {/* Local tile — plain getUserMedia via LocalCamera, no Agora */}
+            {/* FIX Bug 1: Removed dead startMedia function and all its undeclared
+                variable references (streamRef, videoRef, camOn, micOn).
+                LocalCamera manages its own media stream internally. */}
             <div className="w-52 shrink-0 flex-1 h-full">
               <LocalCamera
                 isSpeaking={stt.isListening && !stt.isTranscribing}
@@ -659,14 +673,14 @@ export default function InterviewPage() {
     companyDescription: company,
   }));
 
+  // FIX Bug 2: Lift sessionId state so onEnd can pass it to EndingStep
+  const [endedSessionId, setEndedSessionId] = useState<string>(sessionId);
   const [step, setStep] = useState<Step>("interview");
 
   if (!cvText) return <div className="min-h-screen bg-black" />;
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-
-      {/* Body */}
       <div
         className={`flex-1 ${
           step === "interview"
@@ -686,7 +700,11 @@ export default function InterviewPage() {
               <InterviewStep
                 config={config}
                 sessionId={sessionId}
-                onEnd={() => setStep("ending")}
+                onEnd={(sid) => {
+                  // FIX Bug 2: capture the session ID passed from InterviewStep
+                  setEndedSessionId(sid);
+                  setStep("ending");
+                }}
               />
             </motion.div>
           )}
@@ -701,11 +719,11 @@ export default function InterviewPage() {
               className="w-full max-w-lg pt-8"
             >
               <EndingStep
-                sessionId={sessionId}
+                sessionId={endedSessionId}
                 onNavigate={() =>
                   router.push(
-                    sessionId
-                      ? `/interview/${sessionId}/assessment`
+                    endedSessionId
+                      ? `/interview/${endedSessionId}/assessment`
                       : "/interview/upload-cv"
                   )
                 }

@@ -46,6 +46,7 @@ async function extractTextFromPdf(file: File): Promise<string> {
 
 export default function UploadCV() {
   const router = useRouter();
+
   const [extracting, setExtracting] = useState(false);
   const [error, setError] = useState("");
   const [localFile, setLocalFile] = useState<File | null>(null);
@@ -92,6 +93,7 @@ export default function UploadCV() {
     } finally {
       setExtracting(false);
     }
+
   };
 
   const handleRemoveFile = () => {
@@ -109,7 +111,8 @@ export default function UploadCV() {
           Tải lên <span className="text-green-500">CV</span>
         </h1>
         <p className="text-gray-400 mb-8">
-          AI sẽ dựa vào CV của bạn để tạo ra bộ câu hỏi phỏng vấn sát với thực tế nhất.
+          AI sẽ dựa vào CV của bạn để tạo ra bộ câu hỏi phỏng vấn sát với thực
+          tế nhất.
         </p>
 
         {/* Upload area */}
@@ -130,7 +133,7 @@ export default function UploadCV() {
                 <polyline points="17 8 12 3 7 8" />
                 <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
-              <p className="text-gray-300">Nhấn để chọn file PDF</p>
+              <p className="text-black">Nhấn để chọn file PDF</p>
             </div>
           ) : (
             <div className="flex items-center gap-3 p-4 bg-gray-800 rounded-lg border border-gray-600">
@@ -189,6 +192,7 @@ export default function UploadCV() {
           className="mt-8 w-full py-4 bg-green-500 text-black font-bold text-lg rounded-full
                      disabled:bg-gray-800 disabled:text-gray-500 transition-all
                      hover:scale-[1.02] active:scale-100 shadow-lg shadow-green-500/10"
+
         >
           Tiếp tục
         </button>

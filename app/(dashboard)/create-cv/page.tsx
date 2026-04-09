@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -46,11 +47,11 @@ export default function Home() {
   ];
   const [stepIndex, setStepIndex] = useState(0);
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -63,7 +64,7 @@ export default function Home() {
     }, 1800);
 
     try {
-      const response = await fetch(`${API_BASE}/generate-cv`, {
+      const response = await fetch(`${API_BASE}/api/v1/cv/generate-cv`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -82,7 +83,7 @@ export default function Home() {
       setDownloadUrl(url);
       setGeneratedName(name);
       setStep(2);
-    } catch (err) {
+    } catch (err: any) {
       clearInterval(interval);
       setError(err.message);
       setStep(0);
@@ -180,6 +181,7 @@ export default function Home() {
                     </label>
                     <div className="relative">
                       <select
+                      aria-label="select target position"
                         name="position"
                         value={form.position}
                         onChange={handleChange}
@@ -371,7 +373,14 @@ export default function Home() {
 
 // ── Sub-components ──
 
-function FormCard({ title, icon, children, optional }) {
+interface FormCardProps {
+  title: string;
+  icon: string;
+  children: React.ReactNode;
+  optional?: boolean;
+}
+
+function FormCard({ title, icon, children, optional }: FormCardProps) {
   return (
     <div className="bg-[#0A1020]/80 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
       <div className="flex items-center gap-2 mb-4">
@@ -384,7 +393,18 @@ function FormCard({ title, icon, children, optional }) {
   );
 }
 
-function Field({ label, name, value, onChange, placeholder, required, type = "text", prefix }) {
+interface FieldProps {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  required?: boolean;
+  type?: string;
+  prefix?: string;
+}
+
+function Field({ label, name, value, onChange, placeholder, required, type = "text", prefix }: FieldProps) {
   return (
     <div>
       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">

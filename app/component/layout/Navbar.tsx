@@ -73,10 +73,10 @@ export default function Navbar() {
             Interview
           </Link>
           <Link
-            href="/profile"
+            href="/create-cv"
             className="font-bold text-gray-700 hover:text-green-600 transition-colors"
           >
-            Profile
+            Create CV
           </Link>
         </div>
 
